@@ -51,9 +51,9 @@ body {
   overflow: hidden;
   background: radial-gradient(
     100% 100% at 50% 0%,
-    #0d0d0d 0%,
-    #070707 32%,
-    #030303 64%
+    #060606 0%,
+    #030303 32%,
+    #010101 64%
   );
   box-shadow:
     0 -1px 2px rgba(255, 255, 255, 0.3),
@@ -91,13 +91,13 @@ body {
   mix-blend-mode: screen;
 }
 .planet-tex-far {
-  opacity: 0.55;
+  opacity: 0.1;
   background-image: url("/planet-far.png");
   background-size: 720px 720px;
   animation: tex-drift-far 160s linear infinite;
 }
 .planet-tex-near {
-  opacity: 0.45;
+  opacity: 0.08;
   background-image: url("/planet-near.png");
   background-size: 240px 240px;
   animation: tex-drift-near 48s linear infinite;
@@ -122,8 +122,8 @@ body {
   background:
     radial-gradient(
       120% 52% at 50% 0%,
-      rgba(255, 255, 255, 0.032),
-      transparent 55%
+      rgba(255, 255, 255, 0.016),
+      transparent 50%
     ),
     radial-gradient(100% 100% at 50% 0%, transparent 52%, rgba(0, 0, 0, 0.6) 94%),
     linear-gradient(100deg, transparent 60%, rgba(0, 0, 0, 0.35) 88%);
@@ -142,7 +142,7 @@ body {
   border-radius: 50%;
   background: radial-gradient(
     50% 50% at 50% 50%,
-    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.08),
     transparent 70%
   );
   filter: blur(10px);
@@ -161,13 +161,13 @@ body {
   background:
     radial-gradient(
       34% 40% at 50% 50%,
-      rgba(255, 255, 255, 0.23) 0%,
-      rgba(255, 255, 255, 0.05) 55%,
+      rgba(255, 255, 255, 0.17) 0%,
+      rgba(255, 255, 255, 0.035) 55%,
       transparent 78%
     ),
     radial-gradient(
       72% 72% at 50% 50%,
-      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.05) 0%,
       transparent 70%
     );
   filter: blur(10px);
