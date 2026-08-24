@@ -61,9 +61,7 @@ function ProjectRow({
         <span className="pointer-events-none absolute inset-0 rounded-[16px] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" />
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className="text-[1.4rem] font-normal leading-tight text-white">
-          {label}
-        </h3>
+        <h3 className="text-[1.4rem] leading-tight text-white">{label}</h3>
         <p className="mt-1.5 text-[13.5px] leading-[1.55] text-neutral-400">
           {children}
         </p>
@@ -86,16 +84,31 @@ export default function Home() {
   /* With reduced motion the scene collapses to its final state. */
   const p = useTransform(scrollYProgress, (v) => (prefersReduced ? 1 : v));
 
-  /* planet travel: horizon rises from the hero into the work section */
-  const planetY = useTransform(p, [0.06, 0.58], ["0svh", "-30svh"], {
+  /*
+   * Camera move: we approach the planet (it grows) while the horizon lifts.
+   * The surface texture turns beneath a fixed light, so the sphere reads as a
+   * real 3D body rather than a flat arc sliding upward.
+   */
+  const planetY = useTransform(p, [0.06, 0.62], ["0svh", "-32svh"], {
     ease: EASE,
   });
-  const planetScale = useTransform(p, [0.06, 0.58], [1, 1.06], { ease: EASE });
-  const hotspotOpacity = useTransform(p, [0.06, 0.42], [1, 0.16], { ease: EASE });
+  const planetScale = useTransform(p, [0.06, 0.62], [1, 1.28], { ease: EASE });
+  const hotspotOpacity = useTransform(p, [0.06, 0.42], [1, 0.12], { ease: EASE });
+
+  /* surface drift: terrain flows toward the viewer while the planet turns */
+  const farX = useTransform(p, [0.06, 0.62], ["0%", "-3.5%"], { ease: EASE });
+  const farY = useTransform(p, [0.06, 0.62], ["0%", "3%"], { ease: EASE });
+  const nearX = useTransform(p, [0.06, 0.62], ["0%", "-1.5%"], { ease: EASE });
+  const nearY = useTransform(p, [0.06, 0.62], ["0%", "5.5%"], { ease: EASE });
+
+  /* sun glint sweeps along the limb as we orbit */
+  const glintX = useTransform(p, [0.06, 0.62], ["-8%", "12%"], { ease: EASE });
+  const glintOpacity = useTransform(p, [0.06, 0.5], [1, 0.4], { ease: EASE });
 
   /* hero exit */
   const markOpacity = useTransform(p, [0, 0.18], [1, 0], { ease: EASE });
   const markY = useTransform(p, [0, 0.22], ["0svh", "-13svh"], { ease: EASE });
+  const markScale = useTransform(p, [0, 0.22], [1, 0.92], { ease: EASE });
   const copyOpacity = useTransform(p, [0.04, 0.24], [1, 0], { ease: EASE });
   const copyY = useTransform(p, [0.04, 0.28], ["0svh", "-9svh"], { ease: EASE });
   const headerOpacity = useTransform(p, [0, 0.1], [1, 0], { ease: EASE });
@@ -108,11 +121,11 @@ export default function Home() {
   );
 
   useEffect(() => {
-    /* debug/preview helper: /?s=0.75 opens the scene mid-transition */
+    /* debug/preview helper: /?s=0.75 opens the scene at 75% progress */
     const s = parseFloat(
       new URLSearchParams(window.location.search).get("s") ?? ""
     );
-    if (!Number.isNaN(s)) window.scrollTo(0, window.innerHeight * s);
+    if (!Number.isNaN(s)) window.scrollTo(0, window.innerHeight * s * 2);
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -155,7 +168,25 @@ export default function Home() {
             className="planet-motion"
             style={{ y: planetY, scale: planetScale }}
           >
-            <div className="planet-body" />
+            <div className="planet-sphere">
+              <motion.div
+                className="planet-surface planet-surface-far"
+                style={{ x: farX, y: farY }}
+              >
+                <div className="planet-surface-tex planet-tex-far" />
+              </motion.div>
+              <motion.div
+                className="planet-surface planet-surface-near"
+                style={{ x: nearX, y: nearY }}
+              >
+                <div className="planet-surface-tex planet-tex-near" />
+              </motion.div>
+              <motion.div
+                className="planet-glint"
+                style={{ x: glintX, opacity: glintOpacity }}
+              />
+              <div className="planet-shade" />
+            </div>
             <motion.div className="hotspot" style={{ opacity: hotspotOpacity }} />
           </motion.div>
         </div>
@@ -175,7 +206,7 @@ export default function Home() {
           <nav className="flex items-center gap-2 sm:gap-4">
             <a
               href="#"
-              className="px-2 text-[15px] font-light text-neutral-300 transition-colors duration-300 hover:text-white"
+              className="px-2 text-[15px] text-neutral-300 transition-colors duration-300 hover:text-white"
             >
               about
             </a>
@@ -190,7 +221,7 @@ export default function Home() {
 
         {/* floating mark */}
         <motion.div
-          style={{ opacity: markOpacity, y: markY }}
+          style={{ opacity: markOpacity, y: markY, scale: markScale }}
           className="absolute inset-x-0 top-[29svh] z-10 flex justify-center mix-blend-screen"
           aria-hidden="true"
         >
@@ -208,12 +239,12 @@ export default function Home() {
           style={{ opacity: copyOpacity, y: copyY }}
           className="absolute inset-x-0 top-[51svh] z-10 px-6 text-center"
         >
-          <h1 className="text-[clamp(2.3rem,5vw,3.85rem)] font-light leading-[1.16] tracking-[-0.015em] text-white">
+          <h1 className="text-[clamp(2.3rem,4.7vw,3.6rem)] leading-[1.18] tracking-[-0.01em] text-white">
             we build tiny apps
             <br />
             that solve real workflows.
           </h1>
-          <p className="mt-7 text-[clamp(1.02rem,1.5vw,1.22rem)] font-light leading-[1.6] text-neutral-400">
+          <p className="mt-7 text-[clamp(1rem,1.4vw,1.17rem)] leading-[1.6] text-neutral-400">
             shape labs is building the future of software,
             <br />
             one shape at a time.

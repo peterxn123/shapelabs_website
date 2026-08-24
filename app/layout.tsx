@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Jost } from "next/font/google";
+import { Questrial } from "next/font/google";
 import "./globals.css";
 
-const jost = Jost({
-  variable: "--font-jost",
+const questrial = Questrial({
+  variable: "--font-questrial",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${jost.variable} h-full antialiased`}>
+    <html lang="en" className={`${questrial.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
